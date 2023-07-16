@@ -1,0 +1,16 @@
+{
+  "name": "create-tailwind-vue",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "author": "Rika",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  },
+  "bin": {
+    "create-tailwind-vue": "index.js"
+  },
+  "scripts": {
+    "create-tailwind-vue": "node index.js"
+  }
+}
