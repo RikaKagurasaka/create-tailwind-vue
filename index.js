@@ -34,9 +34,9 @@ function configureTailwind() {
 
   // Generate Tailwind configuration file
   if (isUsingYarn())
-  execSync('yarn run tailwindcss init -p', { stdio: 'inherit' });
+  execSync('yarn add -D postcss autoprefixer && yarn run tailwindcss init -p', { stdio: 'inherit' });
   else
-  execSync('npx tailwindcss init -p', { stdio: 'inherit' });
+  execSync('npm install -D postcss autoprefixer && npx tailwindcss init -p', { stdio: 'inherit' });
 
   // Modify tailwind.config.js to include custom content
   const tailwindConfigPath = './tailwind.config.js';
