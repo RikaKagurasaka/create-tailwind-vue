@@ -1,6 +1,6 @@
 {
   "name": "create-tailwind-vue",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.js",
   "license": "MIT",
   "author": "Rika",
@@ -14,5 +14,10 @@
   "scripts": {
     "create-tailwind-vue": "node index.js"
   },
-  "keywords": ["vite","tailwind","vue-router","pinia"]
+  "keywords": [
+    "vite",
+    "tailwind",
+    "vue-router",
+    "pinia"
+  ]
 }
