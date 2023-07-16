@@ -1,9 +1,10 @@
 {
   "name": "create-tailwind-vue",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "license": "MIT",
   "author": "Rika",
+  "repository": "https://github.com/RikaKagurasaka/create-tailwind-vue",
   "dependencies": {
     "readline-sync": "^1.4.10"
   },
@@ -12,5 +13,6 @@
   },
   "scripts": {
     "create-tailwind-vue": "node index.js"
-  }
+  },
+  "keywords": ["vite","tailwind","vue-router","pinia"]
 }
