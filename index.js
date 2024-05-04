@@ -19,10 +19,11 @@ class MainTsConfigure {
       uses: [],
       mount: ['app.mount("#app");'],
     };
+    let that = this;
     this.cmds = {
       create() {
         console.log(`Creating a new ${projectName} project...`);
-        execSync(isUsingYarn() ? `yarn create vite ${projectName} --template vue-ts` : `npx create-vite ${projectName} --template vue-ts`);
+        execSync(isUsingYarn() ? `yarn create vite ${projectName} --template vue-ts` : `npx create-vite ${projectName} --template vue-ts`, { stdio: "inherit" });
         console.log(`${projectName} project created successfully.`);
       },
       chdir() {
@@ -30,18 +31,21 @@ class MainTsConfigure {
       },
       tailwindcss() {
         console.log("Installing tailwindcss...");
-        execSync(isUsingYarn() ? "yarn add -D tailwindcss@latest postcss@latest autoprefixer@latest" : "npm install -D tailwindcss@latest postcss@latest autoprefixer@latest");
+        execSync(isUsingYarn() ? "yarn add -D tailwindcss@latest postcss@latest autoprefixer@latest" : "npm install -D tailwindcss@latest postcss@latest autoprefixer@latest", { stdio: "inherit" });
         console.log("Configuring tailwindcss...");
-        execSync("npx tailwindcss init -p");
+        execSync("npx tailwindcss init -p", { stdio: "inherit" });
         let tailwindcssJsContent = fs.readFileSync("tailwind.config.js", "utf-8");
-        tailwindcssJsContent = tailwindcssJsContent.replace(/'content\s*:\[\],/g, "'content': ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],");
-        fs.writeFileSync("tailwind.config.js", tailwindcssJsContent);
-        fs.writeFileSync("style.css", "@tailwind base;\n@tailwind components;\n@tailwind utilities;");
+        let tailwindcssJsContentAfter = tailwindcssJsContent.replace(/content\s*:\s*\[\],/g, "content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],");
+        if (tailwindcssJsContentAfter == tailwindcssJsContent) {
+          console.warn("tailwindcss configuration failed.");
+        }
+        fs.writeFileSync("tailwind.config.js", tailwindcssJsContentAfter);
+        fs.writeFileSync("./src/style.css", "@tailwind base;\n@tailwind components;\n@tailwind utilities;");
         console.log("tailwindcss installed and configured successfully.");
       },
       "vue-router"() {
         console.log("Installing vue-router...");
-        execSync(isUsingYarn() ? "yarn add vue-router@next" : "npm install vue-router@next --save");
+        execSync(isUsingYarn() ? "yarn add vue-router@next" : "npm install vue-router@next --save", { stdio: "inherit" });
         console.log("Configuring vue-router...");
         fs.writeFileSync(
           "src/router.ts",
@@ -63,26 +67,28 @@ const router = createRouter({
 export default router;
 `
         );
-        this.mainTsContent.imports.push("import router from './router'");
-        this.mainTsContent.uses.push("app.use(router)");
+        that.mainTsContent.imports.push("import router from './router'");
+        that.mainTsContent.uses.push("app.use(router)");
+        fs.mkdirSync("src/views", { recursive: true });
+        fs.writeFileSync("src/views/Home.vue", "<template><h1>Home</h1></template>");
         console.log("vue-router installed and configured successfully.");
       },
       pinia() {
         console.log("Installing pinia...");
-        execSync(isUsingYarn() ? "yarn add pinia" : "npm install pinia --save");
+        execSync(isUsingYarn() ? "yarn add pinia" : "npm install pinia --save", { stdio: "inherit" });
         console.log("Configuring pinia...");
-        this.mainTsContent.imports.push("import { createPinia } from 'pinia'");
-        this.mainTsContent.uses.push("app.use(createPinia())");
+        that.mainTsContent.imports.push("import { createPinia } from 'pinia'");
+        that.mainTsContent.uses.push("app.use(createPinia())");
         console.log("pinia installed and configured successfully.");
       },
       vueuse() {
         console.log("Installing vueuse...");
-        execSync(isUsingYarn() ? "yarn add @vueuse/core" : "npm install @vueuse/core --save");
+        execSync(isUsingYarn() ? "yarn add @vueuse/core" : "npm install @vueuse/core --save", { stdio: "inherit" });
         console.log("vueuse installed successfully.");
       },
       daisyui() {
         console.log("Installing daisyui...");
-        execSync(isUsingYarn() ? "yarn add -D daisyui" : "npm install -D daisyui@latest");
+        execSync(isUsingYarn() ? "yarn add -D daisyui" : "npm install -D daisyui@latest", { stdio: "inherit" });
         console.log("Configuring daisyui...");
         if (fs.existsSync("tailwind.config.js")) {
           let tailwindcssJsContent = fs.readFileSync("tailwind.config.js", "utf-8");
@@ -94,23 +100,36 @@ export default router;
       },
       "font-awesome"() {
         console.log("Installing fontawesome...");
-        execSync(isUsingYarn() ? "yarn add @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons @fortawesome/vue-fontawesome" : "npm install @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons @fortawesome/vue-fontawesome --save");
+        execSync(isUsingYarn() ? "yarn add @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons @fortawesome/vue-fontawesome" : "npm install @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons @fortawesome/vue-fontawesome --save", { stdio: "inherit" });
+      },
+      "vite-jsx"() {
+        console.log("Installing vite-jsx...");
+        execSync(isUsingYarn() ? "yarn add @vitejs/plugin-vue-jsx" : "npm install @vitejs/plugin-vue-jsx --save", { stdio: "inherit" });
+        let vitConfigTsContent = fs.readFileSync("vite.config.Ts", "utf-8");
+        vitConfigTsContent = `import vueJsx from '@vitejs/plugin-vue-jsx;'\n` + vitConfigTsContent;
+        vitConfigTsContent = vitConfigTsContent.replace(/plugins\s*:\s*\[(.*)\]/, (match, p1) => `plugins: [${p1}, vueJsx()]`);
+        fs.writeFileSync("vite.config.ts", vitConfigTsContent);
+        console.log("vite-jsx installed and configured successfully.");
+      },
+      removeSample() {
+        fs.unlinkSync("src/components/HelloWorld.vue");
+        fs.unlinkSync("src/assets/vue.svg");
+        fs.unlinkSync("public/vite.svg");
+        fs.writeFileSync("src/App.vue", `<template><div id="app"></div></template>`);
       },
       mainTs() {
         let mainTsContent = "";
-        for (const key in this.mainTsContent) {
-          mainTsContent += this.mainTsContent[key].join("\n") + "\n";
+        for (const key in that.mainTsContent) {
+          mainTsContent += that.mainTsContent[key].join("\n") + "\n";
         }
-        fs.writeFileSync(this.mainTsFilePath, mainTsContent);
+        fs.writeFileSync(that.mainTsFilePath, mainTsContent);
       },
     };
   }
   installAll() {
-    let packagesToInstall = ["create", "chdir", ...this.packagesToInstall, "mainTs"];
+    let packagesToInstall = ["create", "chdir", ...this.packagesToInstall, "mainTs", "removeSample"];
     for (const p of packagesToInstall) {
-      if (shouldInstall) {
-        this.cmds[p]();
-      }
+      this.cmds[p]();
     }
   }
 }
@@ -125,7 +144,7 @@ async function main() {
     projectName = require("readline-sync").question(prompt);
   }
 
-  const packagesToInstall = ["tailwindcss", "vue-router", "pinia", "vueuse", "daisyui", "font-awesome"];
+  const packagesToInstall = ["tailwindcss", "vue-router", "vite-jsx", "pinia", "vueuse", "daisyui", "font-awesome"];
   const packageChoices = {};
 
   for (const pack of packagesToInstall) {
