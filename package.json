@@ -1,6 +1,6 @@
 {
   "name": "create-tailwind-vue",
-  "version": "0.0.3",
+  "version": "0.1.0-alpha",
   "main": "index.js",
   "license": "MIT",
   "author": "Rika",
@@ -15,9 +15,13 @@
     "create-tailwind-vue": "node index.js"
   },
   "keywords": [
+    "vue",
     "vite",
     "tailwind",
     "vue-router",
-    "pinia"
+    "pinia",
+    "vueuse",
+    "daisyui",
+    "font-awesome"
   ]
 }
