@@ -137,9 +137,8 @@ async function main() {
     packageChoices[pack] = input === "y";
   }
 
-  createProject(projectName);
-  const config = new MainTsConfigure({ projectName, packagesToInstall: packagesToInstall.filter((pack) => packageChoices[pack]) });
   config.installAll();
+  const config = new MainTsConfigure({ projectName, packagesToInstall: packagesToInstall.filter((pack) => packageChoices[pack]) });
 
   console.log(`\n🎉 Successfully created a new ${projectName} project! 🎉`);
 }
