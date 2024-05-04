@@ -6,7 +6,8 @@ const fs = require("fs");
 function isUsingYarn() {
   return (process.env.npm_config_user_agent || "").indexOf("yarn") === 0;
 }
-console.log(`Using ${isUsingYarn() ? "yarn" : "npm"}...`);
+console.log(`\nUsing ${isUsingYarn() ? "yarn" : "npm"}...`);
+console.log(`args: ${process.argv}`);
 
 class MainTsConfigure {
   constructor({ projectName, packagesToInstall }) {
@@ -137,8 +138,8 @@ async function main() {
     packageChoices[pack] = input === "y";
   }
 
-  config.installAll();
   const config = new MainTsConfigure({ projectName, packagesToInstall: packagesToInstall.filter((pack) => packageChoices[pack]) });
+  config.installAll();
 
   console.log(`\n🎉 Successfully created a new ${projectName} project! 🎉`);
 }
