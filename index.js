@@ -92,7 +92,7 @@ export default router;
         console.log("Configuring daisyui...");
         if (fs.existsSync("tailwind.config.js")) {
           let tailwindcssJsContent = fs.readFileSync("tailwind.config.js", "utf-8");
-          tailwindcssJsContent = tailwindcssJsContent.replace(/'plugins'\s*:\s*\[\]/g, "'plugins': [require('daisyui')],");
+          tailwindcssJsContent = tailwindcssJsContent.replace(/plugins\s*:\s*\[\]/g, "plugins: [require('daisyui')]");
           fs.writeFileSync("tailwind.config.js", tailwindcssJsContent);
         } else {
           console.warn("tailwind.config.js not found, skipping daisyui configuration.");
@@ -106,7 +106,7 @@ export default router;
         console.log("Installing vite-jsx...");
         execSync(isUsingYarn() ? "yarn add @vitejs/plugin-vue-jsx" : "npm install @vitejs/plugin-vue-jsx --save", { stdio: "inherit" });
         let vitConfigTsContent = fs.readFileSync("vite.config.Ts", "utf-8");
-        vitConfigTsContent = `import vueJsx from '@vitejs/plugin-vue-jsx;'\n` + vitConfigTsContent;
+        vitConfigTsContent = `import vueJsx from '@vitejs/plugin-vue-jsx';\n` + vitConfigTsContent;
         vitConfigTsContent = vitConfigTsContent.replace(/plugins\s*:\s*\[(.*)\]/, (match, p1) => `plugins: [${p1}, vueJsx()]`);
         fs.writeFileSync("vite.config.ts", vitConfigTsContent);
         console.log("vite-jsx installed and configured successfully.");
@@ -114,7 +114,6 @@ export default router;
       removeSample() {
         fs.unlinkSync("src/components/HelloWorld.vue");
         fs.unlinkSync("src/assets/vue.svg");
-        fs.unlinkSync("public/vite.svg");
         fs.writeFileSync("src/App.vue", `<template><div id="app"></div></template>`);
       },
       mainTs() {
