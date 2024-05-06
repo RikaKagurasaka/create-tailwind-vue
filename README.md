@@ -11,3 +11,5 @@ Create a vite vue-ts project with optional extra packages
 - [vueuse](https://vueuse.org/)
 - [daisyui](https://daisyui.com/)
 - [font-awesome](https://fontawesome.com/)
+
+It also add `@` alias to `src` folder

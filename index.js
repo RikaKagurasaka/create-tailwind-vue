@@ -24,10 +24,29 @@ class MainTsConfigure {
       create() {
         console.log(`Creating a new ${projectName} project...`);
         execSync(isUsingYarn() ? `yarn create vite ${projectName} --template vue-ts` : `npx create-vite ${projectName} --template vue-ts`, { stdio: "inherit" });
-        console.log(`${projectName} project created successfully.`);
-      },
-      chdir() {
+        console.log("Configuring the project...");
         process.chdir(projectName);
+        execSync(isUsingYarn() ? "yarn add -D @types/node" : "npm install -D @types/node", { stdio: "inherit" });
+        let viteConfigTsContent = fs.readFileSync("vite.config.ts", "utf-8");
+        viteConfigTsContent = viteConfigTsContent.replace('import vue from "@vitejs/plugin-vue"', 'import vue from "@vitejs/plugin-vue"\nimport { fileURLToPath, URL } from "url";');
+        viteConfigTsContent = viteConfigTsContent.replace(
+          "})",
+          `  resolve: {
+    alias: [{ find: "@", replacement: fileURLToPath(new URL("./src", import.meta.url)) }],
+  },
+})`
+        );
+        fs.writeFileSync("vite.config.ts", viteConfigTsContent);
+        let tsconfigJsonContent = fs.readFileSync("tsconfig.json", "utf-8");
+        tsconfigJsonContent = tsconfigJsonContent.replace(
+          '"jsx": "preserve",',
+          `"jsx": "preserve",
+    "paths": {
+      "@/*": ["./src/*"]
+    },`
+        );
+        fs.writeFileSync("tsconfig.json", tsconfigJsonContent);
+        console.log(`${projectName} project created successfully.`);
       },
       tailwindcss() {
         console.log("Installing tailwindcss...");
@@ -106,7 +125,7 @@ export default router;
         console.log("Installing vite-jsx...");
         execSync(isUsingYarn() ? "yarn add @vitejs/plugin-vue-jsx" : "npm install @vitejs/plugin-vue-jsx --save", { stdio: "inherit" });
         let vitConfigTsContent = fs.readFileSync("vite.config.Ts", "utf-8");
-        vitConfigTsContent = `import vueJsx from '@vitejs/plugin-vue-jsx';\n` + vitConfigTsContent;
+        vitConfigTsContent = `import vueJsx from '@vitejs/plugin-vue-jsx'\n` + vitConfigTsContent;
         vitConfigTsContent = vitConfigTsContent.replace(/plugins\s*:\s*\[(.*)\]/, (match, p1) => `plugins: [${p1}, vueJsx()]`);
         fs.writeFileSync("vite.config.ts", vitConfigTsContent);
         console.log("vite-jsx installed and configured successfully.");
@@ -126,7 +145,7 @@ export default router;
     };
   }
   installAll() {
-    let packagesToInstall = ["create", "chdir", ...this.packagesToInstall, "mainTs", "removeSample"];
+    let packagesToInstall = ["create", ...this.packagesToInstall, "mainTs", "removeSample"];
     for (const p of packagesToInstall) {
       this.cmds[p]();
     }
