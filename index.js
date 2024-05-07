@@ -124,10 +124,10 @@ export default router;
       "vite-jsx"() {
         console.log("Installing vite-jsx...");
         execSync(isUsingYarn() ? "yarn add @vitejs/plugin-vue-jsx" : "npm install @vitejs/plugin-vue-jsx --save", { stdio: "inherit" });
-        let vitConfigTsContent = fs.readFileSync("vite.config.Ts", "utf-8");
-        vitConfigTsContent = `import vueJsx from '@vitejs/plugin-vue-jsx'\n` + vitConfigTsContent;
-        vitConfigTsContent = vitConfigTsContent.replace(/plugins\s*:\s*\[(.*)\]/, (match, p1) => `plugins: [${p1}, vueJsx()]`);
-        fs.writeFileSync("vite.config.ts", vitConfigTsContent);
+        let viteConfigTsContent = fs.readFileSync("vite.config.ts", "utf-8");
+        viteConfigTsContent = `import vueJsx from '@vitejs/plugin-vue-jsx'\n` + viteConfigTsContent;
+        viteConfigTsContent = viteConfigTsContent.replace(/plugins\s*:\s*\[(.*)\]/, (match, p1) => `plugins: [${p1}, vueJsx()]`);
+        fs.writeFileSync("vite.config.ts", viteConfigTsContent);
         console.log("vite-jsx installed and configured successfully.");
       },
       removeSample() {
