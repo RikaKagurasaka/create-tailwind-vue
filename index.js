@@ -28,7 +28,7 @@ class MainTsConfigure {
         process.chdir(projectName);
         execSync(isUsingYarn() ? "yarn add -D @types/node" : "npm install -D @types/node", { stdio: "inherit" });
         let viteConfigTsContent = fs.readFileSync("vite.config.ts", "utf-8");
-        viteConfigTsContent = viteConfigTsContent.replace('import vue from "@vitejs/plugin-vue"', 'import vue from "@vitejs/plugin-vue"\nimport { fileURLToPath, URL } from "url";');
+        viteConfigTsContent = viteConfigTsContent.replace(/import vue from ['"']@vitejs\/plugin-vu['"']/, 'import vue from "@vitejs/plugin-vue"\nimport { fileURLToPath, URL } from "url";');
         viteConfigTsContent = viteConfigTsContent.replace(
           "})",
           `  resolve: {
