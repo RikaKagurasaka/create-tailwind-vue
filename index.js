@@ -128,6 +128,12 @@ export default router;
         viteConfigTsContent = `import vueJsx from '@vitejs/plugin-vue-jsx'\n` + viteConfigTsContent;
         viteConfigTsContent = viteConfigTsContent.replace(/plugins\s*:\s*\[(.*)\]/, (match, p1) => `plugins: [${p1}, vueJsx()]`);
         fs.writeFileSync("vite.config.ts", viteConfigTsContent);
+        let tsconfigJsonContent = fs.readFileSync("tsconfig.json", "utf-8");
+        tsconfigJsonContent = tsconfigJsonContent.replace('"jsx": "preserve",', `"jsx": "preserve",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+    "jsxImportSource": "vue",`);
+        fs.writeFileSync("tsconfig.json", tsconfigJsonContent);
         console.log("vite-jsx installed and configured successfully.");
       },
       removeSample() {
